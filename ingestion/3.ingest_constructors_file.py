@@ -79,9 +79,3 @@ constructor_final_df.write.mode("overwrite").format('delta').saveAsTable('f1_pro
 # COMMAND ----------
 
 dbutils.notebook.exit("Success")
-
-# COMMAND ----------
-
-# MAGIC %environment
-# MAGIC "client": "1"
-# MAGIC "base_environment": ""
