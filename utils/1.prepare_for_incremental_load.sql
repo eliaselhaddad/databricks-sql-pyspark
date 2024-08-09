@@ -4,12 +4,24 @@
 
 -- COMMAND ----------
 
+-- MAGIC %run "../includes/configuration"
+
+-- COMMAND ----------
+
 DROP DATABASE IF EXISTS f1_processed CASCADE;
 
 -- COMMAND ----------
 
-CREATE DATABASE IF NOT EXISTS f1_processed
-LOCATION "/mnt/eliasf1deltalake/processed";
+-- MAGIC %python
+-- MAGIC delta_lake_name = delta_lake_name
+-- MAGIC database_location = f"/mnt/{delta_lake_name}/processed"
+-- MAGIC
+-- MAGIC sql_query = f"""
+-- MAGIC CREATE DATABASE IF NOT EXISTS f1_processed
+-- MAGIC LOCATION '{delta_lake_name}'
+-- MAGIC """
+-- MAGIC
+-- MAGIC spark.sql(sql_query)
 
 -- COMMAND ----------
 
@@ -17,15 +29,13 @@ DROP DATABASE IF EXISTS f1_presentation CASCADE;
 
 -- COMMAND ----------
 
-CREATE DATABASE IF NOT EXISTS f1_presentation 
-LOCATION "/mnt/eliasf1deltalake/presentation";
-
--- COMMAND ----------
-
-
-
--- COMMAND ----------
-
--- MAGIC %environment
--- MAGIC "client": "1"
--- MAGIC "base_environment": ""
+-- MAGIC %python
+-- MAGIC delta_lake_name = delta_lake_name
+-- MAGIC database_location = f"/mnt/{delta_lake_name}/presentation"
+-- MAGIC
+-- MAGIC sql_query = f"""
+-- MAGIC CREATE DATABASE IF NOT EXISTS f1_presentation
+-- MAGIC LOCATION '{delta_lake_name}'
+-- MAGIC """
+-- MAGIC
+-- MAGIC spark.sql(sql_query)
