@@ -1,0 +1,13 @@
+{
+	"name": "ls_databricks_course_ws",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-3826828333694209.9.azuredatabricks.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/561e0c90-41ac-4c04-8e37-dd22f60d05dd/resourceGroups/databricks_course/providers/Microsoft.Databricks/workspaces/databricks_course_ws",
+			"existingClusterId": "0717-142404-jr0sfnim"
+		}
+	}
+}
