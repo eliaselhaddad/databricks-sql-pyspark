@@ -4,6 +4,11 @@
 
 # COMMAND ----------
 
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # MAGIC %run "../includes/configuration"
 
 # COMMAND ----------
@@ -45,16 +50,15 @@ races_df = spark.read \
 
 # COMMAND ----------
 
-from pyspark.sql.functions import current_timestamp, to_timestamp, concat, col, lit
+from pyspark.sql.functions import to_timestamp, concat, col, lit
 
 # COMMAND ----------
 
-races_with_ingestion_date_df = add_ingestion_date(races_df)
+races_with_timestamp_df = races_df.withColumn("race_timestamp", to_timestamp(concat(col('date'), lit(' '), col('time')), 'yyyy-MM-dd HH:mm:ss'))
 
 # COMMAND ----------
 
-races_with_timestamp_df = races_with_ingestion_date_df \
-                                  .withColumn("race_timestamp", to_timestamp(concat(col('date'), lit(' '), col('time')), 'yyyy-MM-dd HH:mm:ss'))
+races_with_ingestion_date_df = add_ingestion_date(races_with_timestamp_df)
 
 # COMMAND ----------
 
@@ -63,14 +67,24 @@ races_with_timestamp_df = races_with_ingestion_date_df \
 
 # COMMAND ----------
 
-races_selected_df = races_with_timestamp_df.select(col('raceId').alias('race_id'), col('year').alias('race_year'), 
-                                                   col('round'), col('circuitId').alias('circuit_id'),col('name'), col('ingestion_date'), col('race_timestamp'))
+races_selected_df = races_with_ingestion_date_df.select(col('raceId'), col('year'), col('round'), col('circuitId'),col('name'), col('ingestion_date'), col('race_timestamp'))
+
+# COMMAND ----------
+
+races_renamed_df = races_selected_df.withColumnRenamed("raceId", "race_id") \
+.withColumnRenamed("year", "race_year") \
+.withColumnRenamed("circuitId", "circuit_id") \
+.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##### Step 4 - Write the output to processed container in parquet format
+# MAGIC ##### Write the output to processed container in parquet format
 
 # COMMAND ----------
 
-races_selected_df.write.mode('overwrite').partitionBy('race_year').parquet(f'{processed_folder_path}/races')
+races_renamed_df.write.mode('overwrite').partitionBy('race_year').parquet(f'{processed_folder_path}/races')
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

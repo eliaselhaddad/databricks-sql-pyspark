@@ -9,6 +9,11 @@
 
 # COMMAND ----------
 
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # MAGIC %run "../includes/configuration"
 
 # COMMAND ----------
@@ -64,11 +69,16 @@ circuits_selected_df = circuits_df.select(col("circuitId"), col("circuitRef"), c
 
 # COMMAND ----------
 
+from pyspark.sql.functions import lit
+
+# COMMAND ----------
+
 circuits_renamed_df = circuits_selected_df.withColumnRenamed("circuitId", "circuit_id") \
 .withColumnRenamed("circuitRef", "circuit_ref") \
 .withColumnRenamed("lat", "latitude") \
 .withColumnRenamed("lng", "longitude") \
-.withColumnRenamed("alt", "altitude") 
+.withColumnRenamed("alt", "altitude") \
+.withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -87,3 +97,7 @@ circuits_final_df = add_ingestion_date(circuits_renamed_df)
 # COMMAND ----------
 
 circuits_final_df.write.mode("overwrite").parquet(f"/mnt/{processed_folder_path}/circuits")
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

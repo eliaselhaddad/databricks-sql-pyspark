@@ -4,6 +4,11 @@
 
 # COMMAND ----------
 
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # MAGIC %run "../includes/configuration"
 
 # COMMAND ----------
@@ -27,10 +32,6 @@ constructor_df = spark.read \
 
 # COMMAND ----------
 
-display(constructor_df)
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ##### Step 2 - Drop unwanted columns from the dataframe
 
@@ -49,9 +50,14 @@ constructor_dropped_df = constructor_df.drop(col('url'))
 
 # COMMAND ----------
 
+from pyspark.sql.functions import lit
+
+# COMMAND ----------
+
 constructor_final_df = add_ingestion_date(constructor_dropped_df) \
                         .withColumnRenamed("constructorId", "constructor_id") \
-                        .withColumnRenamed("constructorRef", "constructor_ref")
+                        .withColumnRenamed("constructorRef", "constructor_ref") \
+                        .withColumn("data_source", lit(v_data_source))
 
 
 # COMMAND ----------
@@ -62,3 +68,7 @@ constructor_final_df = add_ingestion_date(constructor_dropped_df) \
 # COMMAND ----------
 
 constructor_final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/constructors")
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")

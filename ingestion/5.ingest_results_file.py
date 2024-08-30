@@ -4,6 +4,11 @@
 
 # COMMAND ----------
 
+dbutils.widgets.text("p_data_source", "")
+v_data_source = dbutils.widgets.get("p_data_source")
+
+# COMMAND ----------
+
 # MAGIC %run "../includes/configuration"
 
 # COMMAND ----------
@@ -61,6 +66,10 @@ results_with_ingestion_date_df = add_ingestion_date(results_df)
 
 # COMMAND ----------
 
+from pyspark.sql.functions import lit
+
+# COMMAND ----------
+
 results_with_columns_df = results_with_ingestion_date_df.withColumnRenamed("resultId", "result_id") \
                                     .withColumnRenamed("raceId", "race_id") \
                                     .withColumnRenamed("driverId", "driver_id") \
@@ -69,7 +78,8 @@ results_with_columns_df = results_with_ingestion_date_df.withColumnRenamed("resu
                                     .withColumnRenamed("positionOrder", "position_order") \
                                     .withColumnRenamed("fastestLap", "fastest_lap") \
                                     .withColumnRenamed("fastestLapTime", "fastest_lap_time") \
-                                    .withColumnRenamed("fastestLapSpeed", "fastest_lap_speed")
+                                    .withColumnRenamed("fastestLapSpeed", "fastest_lap_speed") \
+                                    .withColumn("data_source", lit(v_data_source))
 
 # COMMAND ----------
 
@@ -92,3 +102,7 @@ results_final_df = results_with_columns_df.drop(col("statusId"))
 # COMMAND ----------
 
 results_final_df.write.mode("overwrite").partitionBy('race_id').parquet(f"{processed_folder_path}/results")
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")
