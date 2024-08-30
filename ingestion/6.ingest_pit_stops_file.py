@@ -31,13 +31,9 @@ pit_stops_schema = StructType(fields=[StructField("raceId", IntegerType(), False
 # COMMAND ----------
 
 pit_stops_df = spark.read \
+    .schema(pit_stops_schema) \
     .option("multiLine", True) \
-    .option("inferSchema", True) \
     .json(f"{raw_folder_path}/pit_stops.json")
-
-# Check the inferred schema
-pit_stops_df.printSchema()
-
 
 # COMMAND ----------
 
@@ -63,7 +59,3 @@ final_df = pit_stops_with_ingestion_date_df.withColumnRenamed("driverId", "drive
 # COMMAND ----------
 
 final_df.write.mode("overwrite").parquet(f"{processed_folder_path}/pit_stops")
-
-# COMMAND ----------
-
-display(final_df)
