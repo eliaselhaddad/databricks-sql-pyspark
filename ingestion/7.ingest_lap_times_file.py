@@ -31,6 +31,19 @@ lap_times_schema = StructType(fields=[StructField("raceId", IntegerType(), False
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ##### Handling Multiple Files in a Folder with Wildcards
+# MAGIC
+# MAGIC When working with a folder containing multiple files, Databricks can handle the processing of all files within that folder. If you need to read specific files from a folder that contains files of various types, you can use wildcards to filter the files you want to process.
+# MAGIC
+# MAGIC For example, to read all CSV files with a specific naming pattern, you can use the following approach:
+# MAGIC
+# MAGIC ```python
+# MAGIC df = spark.read.schema(my_schema).csv("path_to_folder/folder_name/file_name*.csv")
+# MAGIC
+
+# COMMAND ----------
+
 lap_times_df = spark.read \
 .schema(lap_times_schema) \
 .csv(f"{raw_folder_path}/lap_times")
