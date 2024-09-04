@@ -1,7 +1,5 @@
 includes/configuration.py
 
-set-up/
-
 raw/
 
 .env
