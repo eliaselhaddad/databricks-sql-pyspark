@@ -46,5 +46,7 @@ Utilize SAS tokens to securely access your Azure storage account.
 - [Ergast API to obtain the data](https://ergast.com/mrd/)
 - [Spark SQL documentation](https://spark.apache.org/docs/latest/api/python/reference/index.html)
 
+Explore the full interactive dashboard [here](https://adb-4455236770148787.7.azuredatabricks.net/?o=4455236770148787#notebook/1925412569228982/dashboard/24b1ad96-ddc7-46c8-992f-3dd6d85fbbb7/present).
+
 
 
